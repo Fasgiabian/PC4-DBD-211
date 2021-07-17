@@ -1,0 +1,233 @@
+CREATE TABLE Reunion(
+  NroReunion NUMERIC(4) NOT NULL,
+  FechaRedaccion DATE NOT NULL,
+  NumPag NUMERIC(2) NOT NULL,
+  LugarRedaccion VARCHAR(60) NOT NULL,
+  Asunto VARCHAR(256) NOT NULL,
+  HoraInicio NUMERIC(2) NOT NULL,
+  HoraFin NUMERIC(2) NOT NULL,
+  PRIMARY KEY (NroReunion)
+);
+
+CREATE TABLE Rol(
+  CodRol NUMERIC(1) NOT NULL,
+  Rol VARCHAR(15) NOT NULL,
+  PRIMARY KEY (CodRol)
+);
+
+CREATE TABLE Trabajador(
+  CodTrabajador VARCHAR(8) NOT NULL,
+  NombTrabajador VARCHAR(60) NOT NULL,
+  Ap_Paterno VARCHAR(60) NOT NULL,
+  Ap_Materno VARCHAR(60) NOT NULL,
+  Contrasena VARCHAR(60) NOT NULL,
+  CodRol NUMERIC(1) NOT NULL,
+  PRIMARY KEY (CodTrabajador),
+  FOREIGN KEY (CodRol) REFERENCES Rol(CodRol)
+);
+
+CREATE TABLE CargoDocente(
+  CodCargoDocente NUMERIC(2) NOT NULL,
+  CargoDocente VARCHAR(20),
+  PRIMARY KEY (CodCargoDocente)
+);
+
+CREATE TABLE TipoDocente(
+  CodTipoDocente NUMERIC(1) NOT NULL,
+  TipoDedicacion VARCHAR(21) NOT NULL,
+  PRIMARY KEY (CodTipoDocente)
+);
+
+CREATE TABLE TipoDedicacion(
+  CodTipoDedicacion NUMERIC(1) NOT NULL,
+  TipoDocente VARCHAR(10) NOT NULL,
+  PRIMARY KEY (CodTipoDedicacion)
+);
+
+CREATE TABLE Docente(
+  GradoInstruccion VARCHAR(25) NOT NULL,
+  CodCargoDocente NUMERIC(2) NOT NULL,
+  CodTipoDocente NUMERIC(1) NOT NULL,
+  CodTipoDedicacion NUMERIC(1) NOT NULL,
+  CodDocente VARCHAR(8) NOT NULL,
+  PRIMARY KEY (CodDocente),
+  FOREIGN KEY (CodDocente) REFERENCES Trabajador(CodTrabajador),
+  FOREIGN KEY (CodCargoDocente) REFERENCES CargoDocente(CodCargoDocente),
+  FOREIGN KEY (CodTipoDocente) REFERENCES TipoDocente(CodTipoDocente),
+  FOREIGN KEY (CodTipoDedicacion) REFERENCES TipoDedicacion(CodTipoDedicacion)
+);
+
+CREATE TABLE Escuela(
+  CodEscuela NUMERIC(1) NOT NULL,
+  Escuela VARCHAR(60) NOT NULL,
+  PRIMARY KEY (CodEscuela)
+);
+
+CREATE TABLE Malla(
+  CodMalla NUMERIC(1) NOT NULL,
+  Malla NUMERIC(4) NOT NULL,
+  PRIMARY KEY (CodMalla)
+);
+
+CREATE TABLE TipoCurso(
+  CodTipoCurso NUMERIC(1) NOT NULL,
+  TipoCurso VARCHAR(15) NOT NULL,
+  PRIMARY KEY (CodTipoCurso)
+);
+
+CREATE TABLE Curso(
+  codCurso VARCHAR(7) NOT NULL,
+  ciclo NUMERIC(2) NOT NULL,
+  CodEscuela NUMERIC(1) NOT NULL,
+  CodMalla NUMERIC(1) NOT NULL,
+  horasTeoricas NUMERIC(1) NOT NULL,
+  horasPracticas NUMERIC(1) NOT NULL,
+  creditos NUMERIC(1) NOT NULL,
+  CodTipoCurso NUMERIC(1) NOT NULL,
+  PRIMARY KEY (codCurso),
+  FOREIGN KEY (CodEscuela) REFERENCES Escuela(CodEscuela),
+  FOREIGN KEY (CodMalla) REFERENCES Malla(CodMalla),
+FOREIGN KEY (CodTipoCurso) REFERENCES TipoCurso(CodTipoCurso)
+);
+
+CREATE TABLE Administrativo(
+  Cargo VARCHAR(60) NOT NULL,
+  CodAdministrativo VARCHAR(8) NOT NULL,
+  PRIMARY KEY (CodAdministrativo),
+  FOREIGN KEY (CodAdministrativo) REFERENCES Trabajador(CodTrabajador)
+);
+
+CREATE TABLE Seccion(
+  IdSeccion NUMERIC(3) NOT NULL,
+  Seccion VARCHAR(1) NOT NULL,
+  vacantes NUMERIC(2) NOT NULL,
+  codCurso VARCHAR(7) NOT NULL,
+  PRIMARY KEY (IdSeccion),
+  FOREIGN KEY (codCurso) REFERENCES Curso(codCurso)
+);
+
+CREATE TABLE DiaDeSemana(
+  CodDia NUMERIC(1) NOT NULL,
+  dia VARCHAR(3) NOT NULL,
+  PRIMARY KEY (CodDia)
+);
+
+CREATE TABLE Turno(
+  CodTurno NUMERIC(1) NOT NULL,
+  turno VARCHAR(1) NOT NULL,
+  PRIMARY KEY (CodTurno)
+);
+
+CREATE TABLE Aula(
+  CodAula NUMERIC(3) NOT NULL,
+  aula VARCHAR(5) NOT NULL,
+  aforo NUMERIC(2) NOT NULL,
+  PRIMARY KEY (CodAula)
+);
+
+CREATE TABLE TipoClase(
+  CodTipoClase NUMERIC(1) NOT NULL,
+  tipo VARCHAR(1) NOT NULL,
+  PRIMARY KEY (CodTipoClase)
+);
+
+CREATE TABLE Clase(
+  CodTurno NUMERIC(1) NOT NULL,
+  horaIni NUMERIC(2) NOT NULL,
+  horaFIn NUMERIC(2) NOT NULL,
+  CodDia NUMERIC(1) NOT NULL,
+  CodAula NUMERIC(3) NOT NULL,
+  IdClase NUMERIC(5) NOT NULL,
+  CodTipoClase NUMERIC(1) NOT NULL,
+  IdSeccion NUMERIC(3) NOT NULL,
+  PRIMARY KEY (IdClase),
+  FOREIGN KEY (IdSeccion) REFERENCES Seccion(IdSeccion),
+  FOREIGN KEY (CodDia) REFERENCES DiaDeSemana(CodDia),
+  FOREIGN KEY (CodTurno) REFERENCES Turno(CodTurno),
+  FOREIGN KEY (CodAula) REFERENCES Aula(CodAula),
+  FOREIGN KEY (CodTipoClase) REFERENCES TipoClase(CodTipoClase)
+);
+
+CREATE TABLE Asigna(
+  anio VARCHAR(6) NOT NULL,
+  CodAdministrativo VARCHAR(8) NOT NULL,
+  CodDocente VARCHAR(8) NOT NULL,
+  IdClase NUMERIC(5) NOT NULL,
+  PRIMARY KEY (anio, IdClase),
+  FOREIGN KEY (CodAdministrativo) REFERENCES Administrativo(CodAdministrativo),
+  FOREIGN KEY (CodDocente) REFERENCES Docente(CodDocente),
+  FOREIGN KEY (IdClase) REFERENCES Clase(IdClase)
+);
+
+CREATE TABLE GradoObtenido(
+  CodGradoObtenido NUMERIC(2) NOT NULL,
+  GradoObtenido VARCHAR(15) NOT NULL,
+  PRIMARY KEY (CodGradoObtenido)
+);
+
+CREATE TABLE GradoAcademico(
+  CodTitulo VARCHAR(7) NOT NULL,
+  CodGradoObtenido NUMERIC(2) NOT NULL,
+  Tema VARCHAR(100) NOT NULL,
+  universidad VARCHAR(100) NOT NULL,
+  mencion VARCHAR(80) NOT NULL,
+  fechaAprobacion DATE NOT NULL,
+  CodDocente VARCHAR(8) NOT NULL,
+  PRIMARY KEY (CodTitulo),
+  FOREIGN KEY (CodDocente) REFERENCES Docente(CodDocente),
+  FOREIGN KEY (CodGradoObtenido) REFERENCES GradoObtenido (CodGradoObtenido)
+);
+
+CREATE TABLE Actualiza(
+  IdActualizacion NUMERIC(6) NOT NULL,
+  CodDocente VARCHAR(8) NOT NULL,
+  CodAdministrativo VARCHAR(8) NOT NULL,
+  PRIMARY KEY (IdActualizacion),
+  FOREIGN KEY (CodDocente) REFERENCES Docente(CodDocente),
+  FOREIGN KEY (CodAdministrativo) REFERENCES Administrativo(CodAdministrativo)
+);
+
+CREATE TABLE TipoDeDato(
+  CodTipoDato NUMERIC(1) NOT NULL,
+  TipoDato VARCHAR(30) NOT NULL,
+  PRIMARY KEY (CodTipoDato)
+);
+
+CREATE TABLE ContenidodelActa(
+  NroContActa NUMERIC(4) NOT NULL,
+  CodTipoDato NUMERIC(1) NOT NULL,
+  Dato VARCHAR(256) NOT NULL,
+  NroReunion NUMERIC(4) NOT NULL,
+  PRIMARY KEY (NroContActa),
+  FOREIGN KEY (NroReunion) REFERENCES Reunion(NroReunion),
+  FOREIGN KEY (CodTipoDato) REFERENCES TipoDeDato(CodTipoDato)
+);
+
+CREATE TABLE TipoCargaHoraria(
+  CodTipoCarga NUMERIC(1) NOT NULL,
+  TipoCarga VARCHAR(50) NOT NULL,
+  PRIMARY KEY (CodTipoCarga)
+);
+
+CREATE TABLE CargaHoraria(
+  NroHoras_Lectivas NUMERIC(2) NOT NULL,
+  NroHoras_NLectivas NUMERIC(2) NOT NULL,
+  CodTipoCarga NUMERIC(1) NOT NULL,
+  horas NUMERIC(2) NOT NULL,
+  NroHorasAdm NUMERIC(2) NOT NULL,
+  IdCargaHoraria NUMERIC(5) NOT NULL,
+  CodTrabajador VARCHAR(8) NOT NULL,
+  PRIMARY KEY (IdCargaHoraria),
+  FOREIGN KEY (CodTrabajador) REFERENCES Docente(CodDocente),
+  FOREIGN KEY (CodTipoCarga) REFERENCES TipoCargaHoraria(CodTipoCarga)
+);
+
+CREATE TABLE Responsabilidad(
+  Asistencia VARCHAR(1) NOT NULL,
+  EsResponsable VARCHAR(1) NOT NULL,
+  CodAdministrativo VARCHAR(8) NOT NULL,
+  NroReunion NUMERIC(4) NOT NULL,
+  PRIMARY KEY (CodAdministrativo, NroReunion),
+  FOREIGN KEY (CodAdministrativo) REFERENCES Trabajador(CodTrabajador),
+  FOREIGN KEY (NroReunion) REFERENCES Reunion(NroReunion)
+);
