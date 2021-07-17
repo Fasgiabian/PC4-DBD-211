@@ -65,6 +65,8 @@ public class ReturnsController {
         return D;
     }
 
+    ;
+
     @GetMapping("/Cursoselect")
     public ArrayList<Curso> getCurso() throws Exception {
         ArrayList<Curso> C = new ArrayList<>();
@@ -97,24 +99,5 @@ public class ReturnsController {
         st.close();
         con.close();
         return Cl;
-    }
-
-    ;
-
-    @PostMapping("/TrabajadorNew")
-    public String newTrab(@RequestBody TrabajadorRequest tr) throws Exception {
-        Connection con = template.getDataSource().getConnection();
-        String sql = "INSERT INTO Trabajador VALUES (?,?,?,?,?,?);";
-        PreparedStatement st = con.prepareStatement(sql);
-        st.setString(1, tr.getCodtrabajador());
-        st.setString(2, tr.getNombre());
-        st.setString(3, tr.getAppat());
-        st.setString(4, tr.getApmat());
-        st.setString(5, tr.getContraseña());
-        st.setInt(6, tr.getCodrol());
-        int a = st.executeUpdate();
-        st.close();
-        con.close();
-        return String.valueOf(a);
     };
 }
