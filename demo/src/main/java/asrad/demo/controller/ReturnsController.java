@@ -81,9 +81,23 @@ public class ReturnsController {
         st.close();
         con.close();
         return C;
-    }
+    };
 
-    ;
+    @GetMapping("/Seccionselect")
+    public ArrayList<Seccion> getSeccion() throws Exception {
+        ArrayList<Seccion> CM = new ArrayList<>();
+        Connection con = template.getDataSource().getConnection();
+        Statement st = con.createStatement();
+        String sql = "SELECT IdSeccion, Seccion FROM SECCION;";
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            CM.add(new Seccion(rs.getInt(1), rs.getString(2)));
+        }
+        rs.close();
+        st.close();
+        con.close();
+        return CM;
+    };
 
     @GetMapping("/Claseselect")
     public ArrayList<Clase> getClase() throws Exception {

@@ -20,16 +20,14 @@ public class AsignaController {
     public String agregarDocenteClase(@RequestParam String anio, @RequestParam String Codadministrativo,
                                       @RequestParam String Coddocente, @RequestParam int Idclase) throws Exception {
         Connection con = template.getDataSource().getConnection();
-        String sql = "INSERT INTO asigna VALUES (?,?,?,?);";
+        String sql = "INSERT INTO ASIGNA VALUES (?,?,?,?);";
         PreparedStatement st = con.prepareStatement(sql);
         st.setString(1, anio);
         st.setString(2, Codadministrativo);
         st.setString(3, Coddocente);
         st.setInt(4, Idclase);
         st.executeUpdate();
-        st.close();
-        con.close();
-        return "Ultimaasignación.html";
+        return "Reporte.html";
     };
 }
 

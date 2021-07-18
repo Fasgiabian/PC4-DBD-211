@@ -6,54 +6,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="Design.css">
     <title>Asignación</title>
 </head>
 <body>
 <div id="app" class="position-absolute top-50 start-50 translate-middle">
-    <h1>{{titulo}}</h1>
-    <div>
-        <label>Nombre del Profesor:</label>
+    <form action="/agregarDocenteClase">
+        <h1>{{titulo}}</h1><h5>Administrativo a cargo:</h5><input value="" name="Codadministrativo"></input>
         <div>
-            <input type="text" v-model="profesor_asignado" list="profesores" placeholder="Nombre de Docente a asignar" name="DocAsig">
-            <datalist id="profesores">
-                <option v-for="(item, index) in computedList">{{item.nombre}}</option>
-            </datalist>
-        </div>
-    </div>
-    <div>
-        <label>Curso a Asignar:</label>
-        <div>
-            <input type="text" v-model="Curso_asignado" list="cursos" placeholder="Curso a asignarse" name="CursoAsig">
-            <datalist id="cursos">
-                <option v-for="(item, index) in computedList2">{{item.nombre}}</option>
-            </datalist>
-        </div>
-    </div>
-    <div>
-        <label>Seccion:</label>
-        <div>
-            <input type="text" v-model="seccion_asignada" list="secciones" placeholder="Seccion" name="SeccionAsig">
-            <datalist id="secciones">
-                <option v-for="(item, index) in computedList3">{{item.seccion}}</option>
-            </datalist>
-        </div>
-    </div>
-    <div>
-        <label>Horario:</label>
-        <div>
-            <input type="text" v-model="horario_asignado" list="horarios" placeholder="Horario" name="HorarioAsig">
-            <datalist id="horarios">
-                <option v-for="(item, index) in computedList4">{{item.id}}</option>
-            </datalist>
-            <h4 v-if="horario_asignado > 0">{{Horario[horario_asignado-1].HorarioI}} - {{Horario[horario_asignado-1].HorarioF}}</h4>
-        </div>
-    </div>
-    <div>
-        <a href="Reporte.html"><button type="submit" class="btn btn-dark position-relative">Asignar</button></a>
-    </div>
+            <label>Año de Asignación</label>
+            <input type="text" placeholder="Año" name="anio">
+                <label>Nombre del Profesor:</label>
+                <div>
+                    <input type="text" v-model="profesor_asignado" list="profesores" placeholder="Nombre de Docente a asignar" name="Coddocente">
+                    <datalist id="profesores">
+                        <option v-for="(item, index) in verProfesores" >{{item.coddocente}}</option>
+                    </datalist>
+                </div>
+            </div>
+            <div>
+                <label>Curso a Asignar:</label>
+                <div>
+                    <input type="text" v-model="Curso_asignado" list="cursos" placeholder="Curso a asignarse">
+                    <datalist id="cursos">
+                        <option v-for="(item, index) in computedList2">{{item.codcurso}}</option>
+                    </datalist>
+                </div>
+            </div>
+            <div>
+                <label>Seccion:</label>
+                <div>
+                    <input type="text" v-model="seccion_asignada" list="secciones" placeholder="Seccion">
+                    <datalist id="secciones">
+                        <option v-for="(item, index) in computedList3">{{item.sec}}</option>
+                    </datalist>
+                </div>
+            </div>
+            <div>
+                <label>Horario:</label>
+                <div>
+                    <input type="text" v-model="horario_asignado" list="horarios" placeholder="Horario" name="Idclase">
+                    <datalist id="horarios">
+                        <option v-for="(item, index) in computedList4">{{item.codclase}}</option>
+                    </datalist>
+                    <h4 v-if="horario_asignado > 0">{{Horario[horario_asignado-1].horaini}} - {{Horario[horario_asignado-1].horafin}}</h4>
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-dark position-relative">Asignar</button>
+            </div>
+        </form>
 </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-<script src="Codigo.js"></script>
+<script>
+    var app = new Vue({
+    el: '#app',
+    data: {
+        titulo: 'Asignación de cursos',
+        administrativo:'STM-3511',
+        Profesores:[],
+        profesor_asignado: '',
+        cod_prof_asig:'',
+        Curso:[
+        ],
+        Curso_asignado:'',
+        Secciones:[
+        ],
+        seccion_asignada:'',
+        Horario:[
+        ],
+        horario_asignado:'',
+    },
+    computed: {
+        verProfesores: function(){
+                      axios.get("http://localhost:8080/Docenteselect",{
+                                  })
+                                  .then(response => this.Profesores = response.data)
+                var vm = this
+            return this.Profesores.filter(function (item) {
+            return item.coddocente.toLowerCase().indexOf(vm.profesor_asignado.toLowerCase()) !== -1
+          })
+                   },
+         Asigna: function(){
+            var ele = document.getElementById("1");
+            ele.value=this.administrativo;
+         },
+        computedList2: function () {
+        axios.get("http://localhost:8080/Cursoselect",{
+                                  })
+                                  .then(response => this.Curso = response.data)
+          var vm2 = this
+          return this.Curso.filter(function (item) {
+            return item.codcurso.indexOf(vm2.Curso_asignado) !== -1
+          })
+        },
+        computedList3: function () {
+        axios.get("http://localhost:8080/Seccionselect",{
+                                  })
+                                  .then(response => this.Secciones = response.data)
+          var vm3 = this
+          return this.Secciones.filter(function (item) {
+            return item.sec.indexOf(vm3.seccion_asignada) !== -1
+          })
+        },
+        computedList4: function () {
+        axios.get("http://localhost:8080/Claseselect",{
+                                  })
+                                  .then(response => this.Horario = response.data)
+          var vm = this
+          return this.Horario.filter(function (item) {
+            return item.codclase.toLowerCase().indexOf(vm.horario_asignado.toLowerCase()) !== -1
+          })
+        },
+      },
+
+  })
+</script>
 </html>
